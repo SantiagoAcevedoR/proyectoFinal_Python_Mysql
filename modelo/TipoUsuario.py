@@ -14,7 +14,7 @@ class TipoUsuario:
         
     def consultarTipos(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT * FROM tipousuario")
+        cur.execute("SELECT * FROM tipousuario WHERE estado ='A'")
         datos = cur.fetchall()
         cur.close()
         return datos 
@@ -39,7 +39,7 @@ class TipoUsuario:
 
     def eliminarTipo(self, id):
         cur = self.cnn.cursor()
-        sql ='''UPDATE tipousuario SET estado='I' WHERE Id={}'''.format(id)  
+        sql ='''UPDATE tipousuario SET estado='I' WHERE id={}'''.format(id)  
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()    
@@ -48,19 +48,17 @@ class TipoUsuario:
 
     def modificarTipo(self, id, nombre):
         cur = self.cnn.cursor()
-        sql='''UPDATE tipousuario SET nombre='{}' WHERE Id={}'''.format(nombre, id)
+        sql='''UPDATE tipousuario SET nombre='{}' WHERE id={}'''.format(nombre, id)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n
 
-def main():
-    a = TipoUsuario()
-    print(a.consultarTipos())
 
-if __name__=="__main__":
-    main()
+    def validarDato(self,string):
+        return string.isdigit()
+
 
 
 

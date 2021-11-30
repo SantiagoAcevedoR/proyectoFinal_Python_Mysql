@@ -1,54 +1,54 @@
 import pymysql
 import conexion
 
-class Color:
+class Mascota:
     def __init__(self):
         self.cnn = pymysql.connect(host=conexion.host, user=conexion.user,password=conexion.password, database=conexion.database)
 
     def __str__(self):
-        datos=self.consultarColores()        
+        datos=self.consultarMascotas()        
         aux=""
         for row in datos:
             aux=aux + str(row) + "\n"
         return aux
-
-    def consultarColores(self):
+        
+    def consultarMascotas(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT * FROM color")
+        cur.execute("SELECT * FROM mascota WHERE estado ='A'")
         datos = cur.fetchall()
         cur.close()
         return datos 
 
-    def buscarColor(self, id):
+    def buscarMascota(self, id):
         cur = self.cnn.cursor()
-        sql = "SELECT * FROM color WHERE id = {}".format(id)
+        sql = "SELECT * FROM mascota WHERE id = {}".format(id)
         cur.execute(sql)
         datos = cur.fetchone()
         cur.close()
         return datos
 
-    def insertarColor(self, nombre):
+    def insertarMascota(self, id_usuario,nombre,id_especie,id_raza,id_color,anio):
         cur = self.cnn.cursor()
-        sql ='''INSERT INTO color (nombre, estado) 
-        VALUES('{}', 'A')'''.format(nombre)
+        sql ='''INSERT INTO mascota (id_usuario, nombre, id_especie, id_raza, id_color, anio_nacimiento, estado) 
+        VALUES('{}','{}', '{}', '{}', '{}', '{}', 'A')'''.format(id_usuario,nombre,id_especie,id_raza,id_color,anio)
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n 
 
-    def eliminarColor(self, id):
+    def eliminarMascota(self, id):
         cur = self.cnn.cursor()
-        sql ='''UPDATE color SET estado='I' WHERE Id={}'''.format(id)  
+        sql ='''UPDATE mascota SET estado='I' WHERE id={}'''.format(id)  
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n  
 
-    def modificarColor(self, id, nombre):
+    def modificarMascota(self, id,nombre):
         cur = self.cnn.cursor()
-        sql='''UPDATE color SET nombre='{}' WHERE Id={}'''.format(nombre, id)
+        sql='''UPDATE mascota SET nombre='{}' WHERE id={}'''.format(nombre, id)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    

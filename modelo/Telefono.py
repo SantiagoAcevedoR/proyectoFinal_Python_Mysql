@@ -1,57 +1,60 @@
 import pymysql
 import conexion
 
-class especie:
+class Telefono:
     def __init__(self):
         self.cnn = pymysql.connect(host=conexion.host, user=conexion.user,password=conexion.password, database=conexion.database)
 
-
     def __str__(self):
-        datos=self.consultarEspecies()        
+        datos=self.consultarTelefonos()        
         aux=""
         for row in datos:
             aux=aux + str(row) + "\n"
         return aux
 
-    def consultarEspecies(self):
+    def consultarTelefonos(self):
         cur = self.cnn.cursor()
-        cur.execute("SELECT * FROM especie")
+        cur.execute("SELECT * FROM telefono WHERE estado = 'A'")
         datos = cur.fetchall()
         cur.close()
         return datos 
 
-    def buscarEspecie(self, id):
+    def buscarTelefono(self, id):
         cur = self.cnn.cursor()
-        sql = "SELECT * FROM especie WHERE id = {}".format(id)
+        sql = "SELECT * FROM telefono WHERE id = {}".format(id)
         cur.execute(sql)
         datos = cur.fetchone()
         cur.close()
         return datos
 
-    def insertarEspecie(self, nombre):
+    def insertarTelefono(self, idUsuario, telefono):
         cur = self.cnn.cursor()
-        sql ='''INSERT INTO especie (nombre, estado) 
-        VALUES('{}', 'A')'''.format(nombre)
+        sql ='''INSERT INTO telefono (id_usuario, numero_telefono, estado) 
+        VALUES('{}','{}', 'A')'''.format(idUsuario,telefono)
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n 
 
-    def eliminarEspecie(self, id):
+    def eliminarTelefono(self, id):
         cur = self.cnn.cursor()
-        sql ='''UPDATE especie SET estado='I' WHERE Id={}'''.format(id)  
+        sql ='''UPDATE telefono SET estado='I' WHERE Id={}'''.format(id)  
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n  
 
-    def modificarTipo(self, id, nombre):
+    def modificarTelefono(self, id, telefono):
         cur = self.cnn.cursor()
-        sql='''UPDATE especie SET nombre='{}' WHERE Id={}'''.format(nombre, id)
+        sql='''UPDATE telefono SET numero_telefono='{}' WHERE Id={}'''.format(telefono, id)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n
+
+    def validarDato(self,string):
+        return string.isdigit()
+

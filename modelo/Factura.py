@@ -19,6 +19,13 @@ class Factura:
         cur.close()
         return datos 
 
+    def consultarFacturasConDetalle(self):
+        cur = self.cnn.cursor()
+        cur.execute("select j.id_factura, sum(j.cantidad), sum(j.subtotal), sum(j.iva), sum(j.total), r.fecha from  facturadetalle j, factura r where j.id_factura = r.id  and j.estado ='A' group by j.id_factura;")
+        datos = cur.fetchall()
+        cur.close()
+        return datos 
+
     def buscarFactura(self, id):
         cur = self.cnn.cursor()
         sql = "SELECT * FROM factura WHERE id = {}".format(id)

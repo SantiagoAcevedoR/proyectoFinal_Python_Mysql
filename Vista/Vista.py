@@ -28,7 +28,7 @@ class APP(tk.Tk):
         contenedor_principal = tk.Frame( self ,bg = "yellow")
         contenedor_principal.grid( padx = 2, pady = 2 , sticky = "nsew")
         self.todos_los_frames = dict()
-        for F in (Tipos,InicioSesion, Registro,UsuarioPanel,VeterinarioPanel,AdministradorPanel,Razas,Colores,Especies,MascotasAdmin,TelefonosAdmin,UsuariosAdmin,MascotasUserA,MascotasUserVer,VerPerfil,FormasPago,ServiciosAdmin,RegistrarVet,ServiciosVet,FacturasVetA):
+        for F in (Tipos,InicioSesion, Registro,UsuarioPanel,VeterinarioPanel,AdministradorPanel,Razas,Colores,Especies,MascotasAdmin,TelefonosAdmin,UsuariosAdmin,MascotasUserA,MascotasUserVer,VerPerfil,FormasPago,ServiciosAdmin,RegistrarVet,ServiciosVet,FacturasVetA,FacturasAdmin,FacturasVet):
             frame = F( contenedor_principal , self)
             self.todos_los_frames[F] = frame
             frame.configure(width=700,height=300)
@@ -106,7 +106,7 @@ class InicioSesion(Frame):
         self.txtUsuario.place(x=100,y=100,width=90, height=30)
         self.lbl2 = Label(frame1,text="Contraseña: ")
         self.lbl2.place(x=3,y=150)        
-        self.txtContra=Entry(frame1)
+        self.txtContra=Entry(frame1,show="*")
         self.txtContra.place(x=100,y=140,width=90, height=30)         
         self.btnAdmin=Button(frame1,text="Iniciar como Admin",relief="flat",bg="#E6F7F5", command=lambda:controller.show_frame( AdministradorPanel )) 
         self.btnAdmin.place(x=30,y=190,width=130, height=20) 
@@ -802,7 +802,7 @@ class VeterinarioPanel(Frame):
         self.imgLbl.place(x=400,y=0,width=300,height=300)
         self.btnFactura=Button(frame1,text="Agregar Factura",command=lambda:controller.show_frame(FacturasVetA))
         self.btnFactura.place(x=150,y=75,width=100, height=30)
-        self.btnVFactura=Button(frame1,text="Ver facturas")
+        self.btnVFactura=Button(frame1,text="Ver facturas",command=lambda:controller.show_frame(FacturasVet))
         self.btnVFactura.place(x=150,y=125,width=100, height=30)
         self.btnServicio=Button(frame1,text="Servicio",command=lambda:controller.show_frame(ServiciosVet))
         self.btnServicio.place(x=150,y=175,width=100, height=30)
@@ -856,15 +856,10 @@ class FacturasVetA(Frame):
             self.comboServ['values']=tuple(list(self.comboServ['values'])+[str(row[0])])
         self.comboServ.place(x=250,y=125)
         self.comboServ.current(0)
-        self.lblCantidad = Label(frame1,text="Cantidad: ",bg="#E6F7F5")
-        self.lblCantidad.place(x=250,y=160)        
-        self.txtCantidad=Entry(frame1)
-        self.txtCantidad.place(x=250,y=185,width=90, height=20)
         self.btnFactura=Button(frame1,text="Agregar Factura",command=self.fRegistroFactura,bg="yellow")
         self.btnFactura.place(x=450,y=125,width=100, height=30)
         self.btnDetalle=Button(frame1,text="Agregar Detalles",command=self.fRegistroFacturaD,bg="yellow")
         self.btnDetalle.place(x=450,y=175,width=100, height=30)
-        self.btnDetalle.configure(state="disabled")
         self.lblAnio= Label(frame1,text="Fecha AAAA-MM-DD: ",bg="#E6F7F5")
         self.lblAnio.place(x=100,y=210)        
         self.txtAnio=Entry(frame1)
@@ -907,21 +902,18 @@ class FacturasVetA(Frame):
             messagebox.showwarning("INFORMACION","Faltan datos en los campos")
 
     def fRegistroFacturaD(self):
-        if self.txtNumeroF2.get()!="" and self.comboServ.get()!="Seleccione" and self.txtCantidad.get()!="":
+        if self.txtNumeroF2.get()!="" and self.comboServ.get()!="Seleccione":
             if self.user.validarDato(self.txtNumeroF2.get())==False:
                 messagebox.showwarning("Datos erroneos","El numero de factura es incorrecto, escribalo de nuevo")
-            elif self.user.validarDato(self.txtCantidad.get())==False:
-                messagebox.showwarning("Datos erroneos","La cantidad es incorrecta, escribala de nuevo")
             else:
                 numero=self.txtNumeroF2.get()
                 num=self.verificarFactura(numero)
                 serv=self.comboServ.get()
-                cantidad=self.txtCantidad.get()
-                idS=self.conseguirUser(serv)
-                if idS=="" or num!=numero:
+                idS=self.conseguirServicio(serv)
+                if num==numero:
                     messagebox.showwarning("Error","Los datos son incorrectos")
                 else:
-                    self.dFac.insertarFacturaDetalle(numero,idS,cantidad)
+                    self.dFac.insertarFacturaDetalle(numero,idS)
                     messagebox.showinfo("Insertar","La informacion del usuario ha sido guardada correctamente")
                     self.limpiarCajasTextoD()
         else:
@@ -938,7 +930,6 @@ class FacturasVetA(Frame):
     def limpiarCajasTextoD(self):
         self.txtNumeroF2.delete(0,END)
         self.comboServ.current(0)
-        self.txtCantidad.delete(0,END)
 
     def verificarFactura(self,num):
         aux=""
@@ -970,6 +961,8 @@ class FacturasVetA(Frame):
             aux=id[0]
         return aux
 
+    
+
     def conseguirPago(self,nombre):
         aux=""
         id=self.forma.buscarNombrePago(nombre)
@@ -982,6 +975,54 @@ class FacturasVetA(Frame):
 
 
 
+class FacturasVet(Frame):
+
+    factura = Factura()
+       
+    def __init__(self, container, controller,*args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        frame1 = Frame(self, bg="#bfdaff")
+        frame1.place(x=0,y=0,width=90, height=300) 
+        self.btnVer=Button(frame1,text="Ver info", command=self.llenarTabla, bg="light blue", fg="white")
+        self.btnVer.place(x=5,y=90,width=80, height=30)
+        self.img= PhotoImage(file="fotos\devolverse.png")
+        self.photoimage = self.img.subsample(7)
+        self.btnDevolverse=Button(frame1, command=lambda:controller.show_frame(VeterinarioPanel),image=self.photoimage, compound = LEFT)
+        self.btnDevolverse.place(x=5,y=235,width=40, height=40) 
+        frame2 = Frame(self,bg="#d3dde3")
+        frame2.place(x=90,y=0,width=590, height=300)                                
+        self.tabla = ttk.Treeview(frame2, columns=("col1","col2","col3","col4","col5"))        
+        self.tabla.column("#0",width=100, anchor=CENTER)
+        self.tabla.column("col1",width=100, anchor=CENTER)
+        self.tabla.column("col2",width=100, anchor=CENTER)
+        self.tabla.column("col3",width=100, anchor=CENTER) 
+        self.tabla.column("col4",width=100, anchor=CENTER) 
+        self.tabla.column("col5",width=100, anchor=CENTER)      
+        self.tabla.heading("#0", text="Numero", anchor=CENTER)
+        self.tabla.heading("col1", text="id Usuario", anchor=CENTER)
+        self.tabla.heading("col2", text="Subtotal", anchor=CENTER) 
+        self.tabla.heading("col3", text="Iva", anchor=CENTER)  
+        self.tabla.heading("col4", text="Total", anchor=CENTER)     
+        self.tabla.heading("col5", text="Fecha", anchor=CENTER)   
+        self.tabla.pack(side=LEFT, fill=Y)
+        sb = Scrollbar(frame2,orient=VERTICAL)
+        sb.pack(side=RIGHT,fill=Y)
+        self.tabla.config(yscrollcommand=sb.set)
+        sb.config(command=self.tabla.yview)
+        self.tabla['selectmode']='browse'
+        self.llenarTabla()
+         
+    
+    def limpiarTabla(self):
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+ 
+    
+    def llenarTabla(self):
+        self.limpiarTabla()
+        datos= self.factura.consultarFacturasConDetalle()
+        for row in datos:
+            self.tabla.insert("",END,text=row[0],values=(row[1],row[2],row[3],row[4],row[5]))
 
 class ServiciosVet(Frame):
     servicio=Servicio()
@@ -1148,7 +1189,7 @@ class AdministradorPanel(Frame):
         self.btnMascotas.place(x=90,y=110,width=90, height=30)
         self.btnUsuarios=Button(frame1,text="Usuarios",command=lambda:controller.show_frame(UsuariosAdmin))
         self.btnUsuarios.place(x=90,y=160,width=90, height=30)
-        self.btnFacturas=Button(frame1,text="Facturas")
+        self.btnFacturas=Button(frame1,text="Facturas",command=lambda:controller.show_frame(FacturasAdmin))
         self.btnFacturas.place(x=190,y=110,width=90, height=30)
         self.btnTipoUsuario=Button(frame1,text="Tipos de usuario",command=lambda:controller.show_frame(Tipos))
         self.btnTipoUsuario.place(x=190,y=160,width=90, height=30)
@@ -1760,8 +1801,6 @@ class UsuariosAdmin(Frame):
         self.tabla['selectmode']='browse'
         self.llenarTabla()
         
-        
-        
     
     def limpiarTabla(self):
         for item in self.tabla.get_children():
@@ -1789,6 +1828,57 @@ class UsuariosAdmin(Frame):
                 messagebox.showinfo("Eliminar", 'Elemento eliminado correctamente.')
                 self.limpiarTabla()
                 self.llenarTabla()
+
+class FacturasAdmin(Frame):
+
+    factura = Factura()
+       
+    def __init__(self, container, controller,*args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        frame1 = Frame(self, bg="#bfdaff")
+        frame1.place(x=0,y=0,width=90, height=300) 
+        self.btnVer=Button(frame1,text="Ver info", command=self.llenarTabla, bg="light blue", fg="white")
+        self.btnVer.place(x=5,y=90,width=80, height=30)
+        self.img= PhotoImage(file="fotos\devolverse.png")
+        self.photoimage = self.img.subsample(7)
+        self.btnDevolverse=Button(frame1, command=lambda:controller.show_frame(AdministradorPanel),image=self.photoimage, compound = LEFT)
+        self.btnDevolverse.place(x=5,y=235,width=40, height=40) 
+        frame2 = Frame(self,bg="#d3dde3")
+        frame2.place(x=90,y=0,width=590, height=300)                                
+        self.tabla = ttk.Treeview(frame2, columns=("col1","col2","col3","col4","col5"))        
+        self.tabla.column("#0",width=100, anchor=CENTER)
+        self.tabla.column("col1",width=100, anchor=CENTER)
+        self.tabla.column("col2",width=100, anchor=CENTER)
+        self.tabla.column("col3",width=100, anchor=CENTER) 
+        self.tabla.column("col4",width=100, anchor=CENTER) 
+        self.tabla.column("col5",width=100, anchor=CENTER)      
+        self.tabla.heading("#0", text="Numero", anchor=CENTER)
+        self.tabla.heading("col1", text="id Usuario", anchor=CENTER)
+        self.tabla.heading("col2", text="Subtotal", anchor=CENTER) 
+        self.tabla.heading("col3", text="Iva", anchor=CENTER)  
+        self.tabla.heading("col4", text="Total", anchor=CENTER)     
+        self.tabla.heading("col5", text="Fecha", anchor=CENTER)   
+        self.tabla.pack(side=LEFT, fill=Y)
+        sb = Scrollbar(frame2,orient=VERTICAL)
+        sb.pack(side=RIGHT,fill=Y)
+        self.tabla.config(yscrollcommand=sb.set)
+        sb.config(command=self.tabla.yview)
+        self.tabla['selectmode']='browse'
+        self.llenarTabla()
+         
+    
+    def limpiarTabla(self):
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+ 
+    
+    def llenarTabla(self):
+        self.limpiarTabla()
+        datos= self.factura.consultarFacturasConDetalle()
+        for row in datos:
+            self.tabla.insert("",END,text=row[0],values=(row[1],row[2],row[3],row[4],row[5]))
+      
+    
 
 class FormasPago(Frame):
 

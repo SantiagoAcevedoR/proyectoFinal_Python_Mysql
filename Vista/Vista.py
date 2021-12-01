@@ -999,7 +999,7 @@ class FacturasVet(Frame):
         self.tabla.column("col4",width=100, anchor=CENTER) 
         self.tabla.column("col5",width=100, anchor=CENTER)      
         self.tabla.heading("#0", text="Numero", anchor=CENTER)
-        self.tabla.heading("col1", text="id Usuario", anchor=CENTER)
+        self.tabla.heading("col1", text="Cantidad Servicios", anchor=CENTER)
         self.tabla.heading("col2", text="Subtotal", anchor=CENTER) 
         self.tabla.heading("col3", text="Iva", anchor=CENTER)  
         self.tabla.heading("col4", text="Total", anchor=CENTER)     
@@ -1032,9 +1032,7 @@ class ServiciosVet(Frame):
         frame1 = Frame(self, bg="#E6F7F5")
         frame1.place(x=0,y=0,width=700, height=300)
         self.btnNuevo=Button(frame1,text="Nuevo", command=self.fNuevo, bg="blue", fg="white")
-        self.btnNuevo.place(x=5,y=50,width=80, height=30 )        
-        self.btnModificar=Button(frame1,text="Modificar", command=self.fModificar, bg="blue", fg="white")
-        self.btnModificar.place(x=5,y=90,width=80, height=30)                
+        self.btnNuevo.place(x=5,y=50,width=80, height=30 )                       
         self.btnEliminar=Button(frame1,text="Eliminar", command=self.fEliminar, bg="blue", fg="white")
         self.btnEliminar.place(x=5,y=130,width=80, height=30)
         self.img= PhotoImage(file="fotos\devolverse.png")
@@ -1093,7 +1091,6 @@ class ServiciosVet(Frame):
 
     def habilitarBotonesOper(self,estado):
         self.btnNuevo.configure(state=estado)                
-        self.btnModificar.configure(state=estado)
         self.btnEliminar.configure(state=estado)
         
     def habilitarBotonesGuardar(self,estado):
@@ -1123,11 +1120,7 @@ class ServiciosVet(Frame):
                 valor = self.txtValor.get()
                 if self.id ==-1:       
                     self.servicio.insertarServicio(nombre,valor)             
-                    messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')
-                else:
-                    self.servicio.modificarServicio(self.id,nombre,valor)
-                    messagebox.showinfo("Modificar", 'Elemento modificado correctamente.')
-                    self.id = -1            
+                    messagebox.showinfo("Insertar", 'Elemento insertado correctamente.')          
                 self.limpiarTabla()
                 self.llenarTabla() 
                 self.limpiarCajasTexto() 
@@ -1137,20 +1130,7 @@ class ServiciosVet(Frame):
         else:
             messagebox.showwarning("Campos vacios","El campo esta vacio, por favor llenelo")
                       
-    def fModificar(self):
-        selected = self.tabla.focus()                               
-        clave = self.tabla.item(selected,'text')        
-        if clave == '':
-            messagebox.showwarning("Modificar", 'Debes seleccionar un elemento.')            
-        else:            
-            self.id= clave  
-            self.habilitarCajasTexto("normal")                         
-            valores = self.tabla.item(selected,'values')
-            self.limpiarCajasTexto()           
-            self.txtNombre.insert(0,valores[0])          
-            self.habilitarBotonesOper("disabled")
-            self.habilitarBotonesGuardar("normal")
-            self.txtNombre.focus()             
+               
     
     def fEliminar(self):
         selected = self.tabla.focus()                               
@@ -1853,7 +1833,7 @@ class FacturasAdmin(Frame):
         self.tabla.column("col4",width=100, anchor=CENTER) 
         self.tabla.column("col5",width=100, anchor=CENTER)      
         self.tabla.heading("#0", text="Numero", anchor=CENTER)
-        self.tabla.heading("col1", text="id Usuario", anchor=CENTER)
+        self.tabla.heading("col1", text="Cantidad Servicios", anchor=CENTER)
         self.tabla.heading("col2", text="Subtotal", anchor=CENTER) 
         self.tabla.heading("col3", text="Iva", anchor=CENTER)  
         self.tabla.heading("col4", text="Total", anchor=CENTER)     

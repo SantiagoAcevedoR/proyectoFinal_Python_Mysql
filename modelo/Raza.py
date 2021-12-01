@@ -20,6 +20,14 @@ class Raza:
         cur.close()
         return datos
 
+    def buscarNombreEspecie(self, nombre):
+        cur = self.cnn.cursor()
+        sql = "SELECT * FROM raza WHERE nombre = '{}';".format(nombre)
+        cur.execute(sql)
+        datos = cur.fetchone()
+        cur.close()
+        return datos
+
     def consultarNombresRazas(self):
         cur = self.cnn.cursor()
         cur.execute("SELECT nombre FROM raza WHERE estado ='A'")

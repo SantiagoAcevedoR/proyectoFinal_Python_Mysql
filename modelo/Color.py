@@ -19,6 +19,14 @@ class Color:
         cur.close()
         return datos 
 
+    def buscarNombreColor(self, nombre):
+        cur = self.cnn.cursor()
+        sql = "SELECT * FROM color WHERE nombre = '{}';".format(nombre)
+        cur.execute(sql)
+        datos = cur.fetchone()
+        cur.close()
+        return datos
+
     def consultarNombresColores(self):
         cur = self.cnn.cursor()
         cur.execute("SELECT nombre FROM color WHERE estado ='A'")

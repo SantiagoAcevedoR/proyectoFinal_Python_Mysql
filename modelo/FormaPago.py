@@ -54,3 +54,18 @@ class Pago:
         self.cnn.commit()    
         cur.close()
         return n
+
+    def consultarNombresPagos(self):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT nombre FROM formapago WHERE estado ='A'")
+        datos = cur.fetchall()
+        cur.close()
+        return datos 
+
+    def buscarNombrePago(self, nombre):
+        cur = self.cnn.cursor()
+        sql = "SELECT * FROM formapago WHERE nombre = '{}';".format(nombre)
+        cur.execute(sql)
+        datos = cur.fetchone()
+        cur.close()
+        return datos

@@ -27,16 +27,17 @@ class FacturaDetalle:
         cur.close()
         return datos
 
-    def insertarFacturaDetalle(self, id_factura,id_servicio):
+    def insertarFacturaDetalle(self, id_factura,id_servicio,cantidad):
         cur = self.cnn.cursor()
         sql = "SELECT valor FROM servicio WHERE id = {}".format(id_servicio)
         cur.execute(sql)
-        subtotal = cur.fetchone()
+        st = cur.fetchone()
+        subtotal=st*cantidad
         iva= float(subtotal*0.19)
         total=int(subtotal+iva)
-        sql ='''INSERT INTO facturadetalle (id_factura,id_servicio,subtotal,iva,total,estado) 
-        VALUES('{}','{}','{}','{}','{}','A')'''.format(id_factura,id_servicio,subtotal,iva,total)
-        cur.execute(sql)
+        sql2 ='''INSERT INTO facturadetalle (id_factura,id_servicio,cantidad,subtotal,iva,total,estado) 
+        VALUES('{}','{}','{}','{}','{}','A')'''.format(id_factura,id_servicio,cantidad,subtotal,iva,total)
+        cur.execute(sql2)
         n = cur.rowcount
         self.cnn.commit()    
         cur.close()

@@ -39,6 +39,7 @@ class Usuario:
         cur.close()
         return datos
 
+
     def buscarIdUsuario(self, nombre_usuario):
         cur = self.cnn.cursor()
         sql = "SELECT id FROM usuario WHERE nombre_usuario = '{}';".format(nombre_usuario)
@@ -64,11 +65,19 @@ class Usuario:
         n = cur.rowcount
         self.cnn.commit()    
         cur.close()
-        return n  
+        return n 
 
-    def modificarUsuario(self, id,nombre_usuario,contrasenia,nombres,apellidos,numero_cedula,edad,direccion):
+    def consultarNombresUsuarios(self):
         cur = self.cnn.cursor()
-        sql='''UPDATE usuario SET nombre_usuario='{}', contrasenia='{}',nombres='{}',apellidos='{}',numero_cedula='{}',edad='{}',direccion='{}'  WHERE id={}'''.format(nombre_usuario,contrasenia,nombres,apellidos,numero_cedula,edad,direccion, id)
+        cur.execute("SELECT nombre_usuario FROM usuario WHERE estado ='A' and id_tipo=3")
+        datos = cur.fetchall()
+        cur.close()
+        return datos
+
+
+    def modificarUsuario(self, id,nombres,apellidos,numero_cedula,edad,direccion):
+        cur = self.cnn.cursor()
+        sql='''UPDATE usuario SET nombres='{}',apellidos='{}',numero_cedula='{}',edad='{}',direccion='{}'  WHERE id={}'''.format(nombres,apellidos,numero_cedula,edad,direccion, id)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    

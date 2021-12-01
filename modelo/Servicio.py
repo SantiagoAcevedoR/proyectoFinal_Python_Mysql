@@ -20,6 +20,21 @@ class Servicio:
         cur.close()
         return datos 
 
+    def consultarNombresServicios(self):
+        cur = self.cnn.cursor()
+        cur.execute("SELECT nombre FROM servicio WHERE estado ='A'")
+        datos = cur.fetchall()
+        cur.close()
+        return datos
+
+    def buscarNombreServicio(self, nombre):
+        cur = self.cnn.cursor()
+        sql = "SELECT * FROM servicio WHERE nombre = '{}';".format(nombre)
+        cur.execute(sql)
+        datos = cur.fetchone()
+        cur.close()
+        return datos 
+
     def buscarServicio(self, id):
         cur = self.cnn.cursor()
         sql = "SELECT * FROM servicio WHERE id = {}".format(id)
@@ -28,10 +43,10 @@ class Servicio:
         cur.close()
         return datos
 
-    def insertarServicio(self, nombre, valor, cantidad):
+    def insertarServicio(self, nombre, valor):
         cur = self.cnn.cursor()
-        sql ='''INSERT INTO servicio (nombre, valor, cantidad, estado) 
-        VALUES('{}', '{}', '{}', 'A')'''.format(nombre, valor, cantidad)
+        sql ='''INSERT INTO servicio (nombre, valor, estado) 
+        VALUES('{}', '{}', 'A')'''.format(nombre, valor)
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()    
@@ -47,11 +62,14 @@ class Servicio:
         cur.close()
         return n  
 
-    def modificarServicio(self, id, nombre, valor, cantidad):
+    def modificarServicio(self, id, nombre, valor):
         cur = self.cnn.cursor()
-        sql='''UPDATE servicio SET nombre='{}', valor='{}',cantitad='{}' WHERE id={}'''.format(nombre, valor, cantidad , id)
+        sql='''UPDATE servicio SET nombre='{}', valor='{}' WHERE id={}'''.format(nombre, valor, id)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n
+
+    def validarDato(self,string):
+        return string.isdigit()

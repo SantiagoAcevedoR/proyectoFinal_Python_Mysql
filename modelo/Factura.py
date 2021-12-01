@@ -1,6 +1,5 @@
 import pymysql
 import conexion
-from datetime import date
 
 class Factura:
     def __init__(self):
@@ -28,10 +27,10 @@ class Factura:
         cur.close()
         return datos
 
-    def insertarFactura(self, id_ususario,id_pago):
+    def insertarFactura(self,id,id_usuario,id_pago,fecha):
         cur = self.cnn.cursor()
-        sql ='''INSERT INTO factura (id_ususario, id_pago, fecha, estado) 
-        VALUES('{}', 'A')'''.format(id_ususario, id_pago, date.today)
+        sql ='''INSERT INTO factura (id,id_usuario, id_pago, fecha, estado) 
+        VALUES('{}','{}','{}','{}','A')'''.format(id, id_usuario, id_pago, fecha)
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()

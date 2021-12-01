@@ -17,7 +17,15 @@ class Mascota:
         cur.execute("SELECT * FROM mascota WHERE estado ='A'")
         datos = cur.fetchall()
         cur.close()
-        return datos 
+        return datos
+
+    def consultarMascotasPorId(self,id):
+        cur = self.cnn.cursor()
+        sql="SELECT * FROM mascota WHERE id_usuario ={}".format(id)
+        cur.execute(sql)
+        datos = cur.fetchall()
+        cur.close()
+        return datos  
 
     def buscarMascota(self, id):
         cur = self.cnn.cursor()

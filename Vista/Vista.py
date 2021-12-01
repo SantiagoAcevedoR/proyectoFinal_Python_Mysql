@@ -819,7 +819,7 @@ class FacturasVetA(Frame):
         frame1.place(x=0,y=0,width=700, height=300)
         self.img= PhotoImage(file="fotos\devolverse.png")
         self.photoimage = self.img.subsample(7)
-        self.btnDevolverse=Button(frame1, command=lambda:controller.show_frame(InicioSesion),image=self.photoimage, compound = LEFT)
+        self.btnDevolverse=Button(frame1, command=lambda:controller.show_frame(VeterinarioPanel),image=self.photoimage, compound = LEFT)
         self.btnDevolverse.place(x=5,y=235,width=40, height=40)
         self.lblNumeroF = Label(frame1,text="Numero de factura: ",bg="#E6F7F5")
         self.lblNumeroF.place(x=100,y=40)        
